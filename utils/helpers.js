@@ -77,7 +77,7 @@ export function isBetween (num, x, y) {
               <MaterialCommunityIcons
               name='bike'
               color={'black'}
-              size={35}
+              size={45}
               />
             </View>
           );
