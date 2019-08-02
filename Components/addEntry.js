@@ -16,10 +16,10 @@ import DateHeader from './DateHeader'
      }
 
      increment = (metric) =>{
-        const {max,step} = getMetricMetaInfo(metric)
+        const {max,step} = getMetricMetaInfo(metric);
 
         this.setState((state)=>{
-            const count = state[metric] + step 
+            const count = state[metric] + step;
 
             return{
                 ...state,
@@ -40,7 +40,7 @@ import DateHeader from './DateHeader'
 
      slide = (metric,value) =>{
          this.setState(() =>({
-             [metric]: value
+             [metric]: value,
          }))
 
      }
@@ -50,7 +50,7 @@ import DateHeader from './DateHeader'
             <View>
                 <DateHeader date={(new Date()).toLocaleDateString()}/>
                  {Object.Keys(metaInfo).map((key) =>{
-                     const {getIcon,type,...rest} = metaInfo[key]
+                     const {getIcon,type, ...rest} = metaInfo[key];
                      const value = this.state[key]
                      return(
                          <View key={key}>
