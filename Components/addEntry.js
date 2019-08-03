@@ -1,10 +1,22 @@
 import React from 'react'
-import {View} from 'react-native'
-import {getMetricMetaInfo} from '../utils/helpers'
+import {View,TouchableOpacity,Text} from 'react-native'
+import {getMetricMetaInfo,timeToString} from '../utils/helpers'
 import UdaciSlider from './UdaciSlider'
 import UdaciSteppers from './UdaciSteppers'
 import DateHeader from './DateHeader'
 
+
+function BtnSubmit({onPress}){
+    return(
+        <TouchableOpacity
+        onPress={onPress}
+        >
+           <Text>
+            Submit
+            </Text>
+        </TouchableOpacity>
+    )
+}
 
  class  AddEntry extends React.Component{
      state={
@@ -40,16 +52,29 @@ import DateHeader from './DateHeader'
 
      slide = (metric,value) =>{
          this.setState(() =>({
-             [metric]: value,
+             [metric]: value
          }))
 
+     }
+
+     submit = () =>{
+        const key = timeToString()
+        const entry = this.state
+
+        this.setState(() =>({
+            run:0,
+            bike:0,
+            swim:0,
+            sleep:0,
+            eat:0
+        }))
      }
     render(){
         const metaInfo = getMetricMetaInfo()
         return(
             <View>
-                <DateHeader date={(new Date()).toLocaleDateString()}/>
-                 {Object.Keys(metaInfo).map((key) =>{
+                 <DateHeader date={(new Date()).toLocaleDateString()}/>
+                 {Object.keys(metaInfo).map((key) =>{
                      const {getIcon,type, ...rest} = metaInfo[key];
                      const value = this.state[key]
                      return(
@@ -70,7 +95,8 @@ import DateHeader from './DateHeader'
                            }
                          </View>
                      )
-                 })}        
+                 })} 
+                 <BtnSubmit onPress={this.submit}/>       
             </View>
         )
     }
