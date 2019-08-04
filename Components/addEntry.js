@@ -1,9 +1,14 @@
 import React from 'react'
 import {View,TouchableOpacity,Text} from 'react-native'
-import {getMetricMetaInfo,timeToString} from '../utils/helpers'
+import {getMetricMetaInfo,timeToString,getDayliReminderValue} from '../utils/helpers'
 import UdaciSlider from './UdaciSlider'
 import UdaciSteppers from './UdaciSteppers'
 import DateHeader from './DateHeader'
+import {Ionicons} from '@expo/vector-icons'
+import TextButton from './TextButtons'
+import {submitEntry,removeEntry} from '../utils/api'
+import {connect} from 'react-redux'
+import {addEntry} from '../Actions/index'
 
 
 function BtnSubmit({onPress}){
@@ -60,7 +65,9 @@ function BtnSubmit({onPress}){
      submit = () =>{
         const key = timeToString()
         const entry = this.state
-
+        this.props.dispatch(addEntry({
+            [key]:entry
+        }))
         this.setState(() =>({
             run:0,
             bike:0,
@@ -68,9 +75,34 @@ function BtnSubmit({onPress}){
             sleep:0,
             eat:0
         }))
+        submitEntry({key,entry})
+     }
+
+     reset = () =>{
+         const key = timeToString()
+         this.props.dispatch(addEntry({
+             [key]: getDayliReminderValue()
+         }))
+
+         removeEntry({key})
      }
     render(){
         const metaInfo = getMetricMetaInfo()
+
+        if(this.props.alreadyLogged){
+            return(
+                <View>
+                    <Ionicons
+                    name='ios-happy'
+                    size={95}
+                    />
+                    <Text>You already Log Your Information for Today</Text>
+                    <TextButton onPress={this.reset}>
+                        Reset
+                    </TextButton>
+                </View>
+            )
+        }
         return(
             <View>
                  <DateHeader date={(new Date()).toLocaleDateString()}/>
@@ -83,7 +115,7 @@ function BtnSubmit({onPress}){
                              {type === 'slider'
                             ? <UdaciSlider
                             value={value}
-                            onChane={(value)=> this.slide(key,value)}
+                            onChange={(value)=> this.slide(key,value)}
                             {...rest}
                             />
                             : <UdaciSteppers
@@ -101,5 +133,12 @@ function BtnSubmit({onPress}){
         )
     }
 }
+function mapStateToProps(state){
+    const key = timeToString()
+    return{
+        alreadyLogged: state[key] && typeof state[key].today === 'undefined'
+    }
+}
 
-export default AddEntry 
+
+export default connect(mapStateToProps)(AddEntry) 
